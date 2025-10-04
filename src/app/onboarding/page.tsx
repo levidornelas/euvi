@@ -1,12 +1,11 @@
 'use client';
 
-import React, { useState, useCallback, useEffect } from 'react';
+import React from 'react';
 import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import Image from 'next/image';
-import useEmblaCarousel from "embla-carousel-react";
 import { cn } from "@/lib/utils";
-
+import { useCarousel } from '@/hooks/use-carousel';
 
 interface Slide {
   imageSrc: string;
@@ -16,15 +15,6 @@ interface Slide {
 const OnboardingSwipe: React.FC = () => {
   const router = useRouter();
   
-  // Configuração do Embla Carousel
-  const [emblaRef, emblaApi] = useEmblaCarousel(
-    {
-      loop: false, 
-      align: "center",
-      watchDrag: (emblaApi) => emblaApi.slideNodes().length > 1,
-    },
-  );
-
   const slides: Slide[] = [
     {
       imageSrc: "/o1.svg",
@@ -40,57 +30,21 @@ const OnboardingSwipe: React.FC = () => {
     }
   ];
 
-  const [currentSlide, setCurrentSlide] = useState<number>(0);
-
-  // Handlers do Embla
-  const goToSlide = useCallback(
-    (index: number): void => {
-      if (emblaApi) emblaApi.scrollTo(index);
-    },
-    [emblaApi]
-  );
-
-  const goToNext = useCallback((): void => {
-    if (emblaApi) {
-      if (currentSlide < slides.length - 1) {
-        emblaApi.scrollNext();
-      } else {
-        router.push('/map'); 
-      }
-    }
-  }, [emblaApi, currentSlide, router, slides.length]);
-
-  const goToPrevious = useCallback((): void => {
-    if (emblaApi) {
-      if (currentSlide > 0) {
-        emblaApi.scrollPrev();
-      } else {
-        router.push('/'); 
-      }
-    }
-  }, [emblaApi, currentSlide, router]);
+  const { 
+    emblaRef, 
+    currentSlide, 
+    goToNext, 
+    goToPrevious, 
+    goToSlide 
+  } = useCarousel({
+    totalSlides: slides.length,
+    onLastSlide: () => router.push('/map'),
+    onFirstSlideBack: () => router.push('/'),
+  });
 
   const skipToMap = (): void => {
     router.push('/map');
   };
-
-  const onSelect = useCallback(() => {
-    if (!emblaApi) return;
-    setCurrentSlide(emblaApi.selectedScrollSnap());
-  }, [emblaApi]);
-
-  useEffect(() => {
-    if (!emblaApi) return;
-    onSelect();
-    emblaApi.on("select", onSelect);
-    emblaApi.on("reInit", onSelect);
-
-    return () => {
-      emblaApi.off("select", onSelect);
-      emblaApi.off("reInit", onSelect);
-    };
-  }, [emblaApi, onSelect]);
-
 
   return (
     <div className="flex flex-col justify-between bg-white h-screen relative overflow-hidden">
