@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button';
 import Image from 'next/image';
 import { cn } from "@/lib/utils";
 import { useCarousel } from '@/hooks/use-carousel';
-
+import { ChevronRight } from 'lucide-react';
 interface Slide {
   imageSrc: string;
   imageAlt: string;
@@ -110,7 +110,7 @@ const OnboardingSwipe: React.FC = () => {
       </div>
 
       {/* Botão de ação */}
-      <div className="px-6 pb-8">
+      <div className="px-6 pb-8 mb-8">
         <Button
           onClick={goToNext}
           className="w-full py-3 text-lg font-medium"
@@ -121,12 +121,10 @@ const OnboardingSwipe: React.FC = () => {
       </div>
 
       {currentSlide < slides.length - 1 && (
-        <div className="absolute bottom-28 right-6 animate-pulse hidden sm:block">
-          <div className="flex items-center space-x-1 text-gray-700 text-sm">
+        <div className="absolute bottom-40 right-6 animate-pulse transition-colors ">
+          <div className="flex items-center space-x-1 text-primary text-sm">
             <span>Deslize</span>
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-              <path d="M8.59 16.59L13.17 12L8.59 7.41L10 6l6 6-6 6-1.41-1.41z"/>
-            </svg>
+            <ChevronRight className="w-4 h-4" />
           </div>
         </div>
       )}

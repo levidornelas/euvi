@@ -170,11 +170,10 @@ export default function MediaMap() {
                     captions={[selectedPin.legenda_1, selectedPin.legenda_2, selectedPin.legenda_3]}
                   />
 
-                  <div className="flex justify-center pt-4">
+                  <div className="flex justify-center pt-2 mb-6 sm:mb-0">
                     <Button
                       onClick={() => router.push(`/details/${selectedPin.id}`)}
-                      className="bg-primary rounded-full px-12 py-6 text-lg font-medium shadow-lg"
-                      size="lg"
+                      variant={'default'}
                     >
                       Descobrir
                     </Button>
@@ -220,7 +219,7 @@ export default function MediaMap() {
                   </div>
                 </div>
 
-                <ScrollArea className="h-40 w-full">
+                <ScrollArea className="h-full w-full mb-4 sm:mb-0">
                   <div className="space-y-2">
                     {showRecents && (
                       <div className="space-y-2">

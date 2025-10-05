@@ -54,13 +54,11 @@ const LeafletMap = ({
   onPinClick,
   onZoomChange,
 }) => {
-  // 🚫 Bloqueia render no lado do servidor
   if (typeof window === "undefined") return null;
 
   return (
     <div className="relative flex-1">
     <MapContainer
-      key={`${mapCenter[0]}-${mapCenter[1]}-${mapZoom}`}
       center={mapCenter}
       zoom={mapZoom}
       className="h-full w-full z-0"
