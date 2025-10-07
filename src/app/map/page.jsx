@@ -197,23 +197,23 @@ export default function MediaMap() {
               duration: 1,
               ease: "easeInOut",
             }}
-            className="absolute bottom-0 left-0 right-0"
+            className="absolute bottom-0 left-0 right-0 w-full"
           >
             <Card className="rounded-md shadow-2xl">
               <CardContent className="p-6 space-y-4">
-                <div className="relative w-full max-w-3xl mx-auto flex items-center gap-2">
+                <div className="relative w-full mx-auto flex items-center gap-2">
                   <div className="relative flex-1">
                     <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 h-5 w-5" />
                     <Input
                       type="text"
                       placeholder="Pesquise um ponto mapeado"
-                      className="pl-12 h-12 rounded-full border-2 border-blue-500 focus-visible:ring-blue-300"
+                      className="pl-10 h-12 rounded-full border-2 border-primary focus-visible:ring-blue-300 placeholder:text-sm"
                       value={searchQuery}
                       onChange={handleSearchChange}
                     />
                   </div>
                   <div className="ml-4 rounded-full bg-primary p-3 hover:cursor-pointer hover:bg-blue-500 transition-colors">
-                    <Link href="/profile">
+                    <Link href="#">
                       <User className="text-white" />
                     </Link>
                   </div>
@@ -223,7 +223,7 @@ export default function MediaMap() {
                   <div className="space-y-2">
                     {showRecents && (
                       <div className="space-y-2">
-                        <h2 className="text-lg font-semibold text-gray-900 flex items-center gap-2">Recentes</h2>
+                        <h2 className="text-lg font-semibold text-foreground flex items-center gap-2">Recentes</h2>
                         {recentItems.map((item) => (
                           <RecentItemCard key={item.id} item={item} handlePinClick={handlePinClick} />
                         ))}
