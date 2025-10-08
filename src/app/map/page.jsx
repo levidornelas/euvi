@@ -213,7 +213,7 @@ export default function MediaMap() {
                     />
                   </div>
                   <div className="ml-4 rounded-full bg-primary p-3 hover:cursor-pointer hover:bg-blue-500 transition-colors">
-                    <Link href="#">
+                    <Link href="/profile">
                       <User className="text-white" />
                     </Link>
                   </div>

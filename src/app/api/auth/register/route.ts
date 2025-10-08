@@ -3,7 +3,7 @@ import { cookies } from "next/headers";
 export async function POST(req: Request) {
   const body = await req.json();
   
-  const res = await fetch(`${process.env.API_URL}/auth/register/`, {
+  const res = await fetch(`${process.env.API_URL}auth/register/`, {
     method: "POST",
     body: JSON.stringify(body),
     headers: { "Content-Type": "application/json" },
@@ -11,6 +11,10 @@ export async function POST(req: Request) {
 
   if (!res.ok) {
     const errorData = await res.json();
+
+    const detail = errorData.detail
+
+    console.log(detail)
     return new Response(
       JSON.stringify({
         detail: errorData.detail || "Erro ao criar conta",
@@ -18,6 +22,8 @@ export async function POST(req: Request) {
       {
         status: res.status,
       }
+
+
     );
   }
 

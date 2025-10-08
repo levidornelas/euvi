@@ -4,7 +4,7 @@ export async function GET() {
   const { access, error } = await checkAuth();
   if (error) return error;
 
-  const res = await fetch(`${process.env.API_URL}/auth/profile/`, {
+  const res = await fetch(`${process.env.API_URL}auth/profile/`, {
     headers: {
       Authorization: `Bearer ${access}`,
     },

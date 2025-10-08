@@ -52,22 +52,18 @@ export default function Sign() {
           <span className="text-sm font-semibold text-[#16181D]">Ou</span>
         </div>
 
-        {/* Actions (sem sombra, pílulas) */}
         <div className="space-y-3">
           <Button
-            className="w-full h-12 rounded-full text-white
-                       bg-[#155BFF] hover:bg-[#155BFF]/90 shadow-none"
-            onClick={() => console.log('Entrar')}
+          className='w-full'
+            onClick={() => router.push('/login')}
           >
             Entrar
           </Button>
 
           <Button
-            variant="outline"
-            className="w-full h-12 rounded-full bg-white
-                       border border-[#2F6EF6] text-[#2F6EF6]
-                       hover:bg-[#EEF4FF] shadow-none"
-            onClick={() => router.push('/cadastro')}
+            variant="ghost"
+            onClick={() => router.push('/register')}
+            className='w-full mt-2'
           >
             Cadastro
           </Button>

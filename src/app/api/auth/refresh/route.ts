@@ -13,7 +13,7 @@ export async function POST(req: Request) {
   }
 
   try {
-    const res = await fetch(`${process.env.API_URL}/auth/refresh/`, {
+    const res = await fetch(`${process.env.API_URL}auth/refresh/`, {
       method: "POST",
       body: JSON.stringify({ refresh: refreshToken }),
       headers: { "Content-Type": "application/json" },

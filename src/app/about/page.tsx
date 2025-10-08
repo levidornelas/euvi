@@ -16,7 +16,7 @@ export default function AboutUs() {
       </div>
 
       {/* Valores e objetivos */}
-      <div className="flex flex-col items-center gap-6 mt-8 px-6">
+      <div className="flex flex-col items-center gap-6 mt-8 px-6 max-h-screen">
         <Card className="w-full max-w-3xl">
           <CardHeader>
             <CardTitle>Quem somos</CardTitle>
