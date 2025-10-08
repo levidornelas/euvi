@@ -11,7 +11,6 @@ import ImageGallery from "@/components/ImageGallery"
 import { getColorForMediaType, getIconForMediaType } from "@/utils/media-type"
 import { Badge } from "@/components/ui/badge"
 import { motion, AnimatePresence } from "framer-motion"
-import Image from "next/image"
 
 export default function Details() {
   const params = useParams()
