@@ -51,7 +51,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   }
 
   useEffect(() => {
-    const publicPaths = ["/login", "/sign", "/", "/onboarding"]; 
+    const publicPaths = ["/login", "/sign", "/"]; 
     if (!publicPaths.includes(pathname) && !user) {
       fetchUser();
     } else {

@@ -27,7 +27,9 @@ export async function POST(req: Request) {
     );
   }
 
-  const { access, refresh } = await res.json();
+  const data = await res.json()
+  const { access, refresh } = data.tokens || {};
+
   const cookieStore = cookies();
   const expiresInSeconds = 60 * 60;
 

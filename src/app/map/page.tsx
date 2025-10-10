@@ -7,7 +7,8 @@ import Link from "next/link"
 
 import { X, Search, User } from "lucide-react"
 
-import { fetchMediaItems } from "@/services/consume-api"
+import { MediaItemService } from '@/services/MediaItemService';
+
 import { motion, AnimatePresence } from "framer-motion"
 
 import { Button } from "@/components/ui/button"
@@ -23,19 +24,20 @@ import LoadingSpinner from "@/components/LoadingSpinner"
 
 import { getColorForMediaType, getIconForMediaType } from "@/utils/media-type"
 
+
 const DynamicMap = dynamic(() => import("@/components/LeafletMap"), {
   ssr: false,
   loading: () => <LoadingSpinner text="Carregando mapa..." />,
 })
 
 export default function MediaMap() {
-  const [mediaItems, setMediaItems] = useState([])
+  const [mediaItems, setMediaItems] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
-  const [error, setError] = useState(null)
-  const [selectedPin, setSelectedPin] = useState(null)
+  const [error, setError] = useState<string | null>(null) 
+  const [selectedPin, setSelectedPin] = useState<any>(null) 
   const [searchQuery, setSearchQuery] = useState("")
-  const [recentItems, setRecentItems] = useState([])
-  const [userLocation, setUserLocation] = useState(null)
+  const [recentItems, setRecentItems] = useState<any[]>([]) 
+  const [userLocation, setUserLocation] = useState<any>(null) 
   const [mapCenter, setMapCenter] = useState([-8.05428, -34.8813])
   const router = useRouter()
   const [mapZoom, setMapZoom] = useState(14)
@@ -62,10 +64,32 @@ export default function MediaMap() {
     }
   }
 
+  // CORREÇÃO: Usando MediaItemService corretamente
   useEffect(() => {
-    fetchMediaItems(setMediaItems, setLoading, setError)
+    const loadMediaItems = async () => {
+      setLoading(true)
+      try {
+        const result = await MediaItemService.fetchMediaItems()
+        
+        if (result.success && result.data) {
+          setMediaItems(result.data)
+          setError(null)
+        } else {
+          // Se falhar, use o detalhe do erro do serviço
+          throw new Error(result.detail || "Falha ao buscar itens de mídia.")
+        }
+      } catch (err: any) {
+        // Captura e define o erro
+        setError(err.message || 'Erro de conexão ao carregar itens de mídia.')
+      } finally {
+        // Desliga o loading em qualquer caso (sucesso ou falha)
+        setLoading(false)
+      }
+    }
+
+    loadMediaItems()
     getUserLocation()
-  }, [])
+  }, []) // Dependências vazias para rodar apenas uma vez
 
   useEffect(() => {
     if (typeof window !== "undefined") {
@@ -78,7 +102,7 @@ export default function MediaMap() {
     return mediaItems.filter((item) => item.title.toLowerCase().includes(searchQuery.toLowerCase())).slice(0, 2)
   }
 
-  const handlePinClick = (item) => {
+  const handlePinClick = (item: any) => { // Tipagem ajustada
     setSelectedPin(item)
 
     setRecentItems((prevItems) => {
@@ -97,11 +121,11 @@ export default function MediaMap() {
     setSelectedPin(null)
   }
 
-  const handleSearchChange = (event) => {
+  const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => { // Tipagem ajustada
     setSearchQuery(event.target.value)
   }
 
-  const handleZoomChange = (zoom) => {
+  const handleZoomChange = (zoom: number) => { // Tipagem ajustada
     setMapZoom(zoom)
   }
 
@@ -212,11 +236,11 @@ export default function MediaMap() {
                       onChange={handleSearchChange}
                     />
                   </div>
+                  <Link href="/profile">
                   <div className="ml-4 rounded-full bg-primary p-3 hover:cursor-pointer hover:bg-blue-500 transition-colors">
-                    <Link href="/profile">
-                      <User className="text-white" />
-                    </Link>
+                    <User className="text-white" />
                   </div>
+                  </Link>
                 </div>
 
                 <ScrollArea className="h-full w-full mb-4 sm:mb-0">

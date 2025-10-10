@@ -10,6 +10,7 @@ import { ChevronRight } from 'lucide-react';
 import { useAuth } from '@/providers/AuthProvider';
 import LoadingSpinner from '@/components/LoadingSpinner';
 
+
 interface Slide {
   imageSrc: string;
   imageAlt: string;
@@ -18,6 +19,8 @@ interface Slide {
 const OnboardingSwipe: React.FC = () => {
   const router = useRouter();
   const { user, loading } = useAuth(); 
+  
+  console.log(user)
 
   const slides: Slide[] = [
     { imageSrc: "/o1.svg", imageAlt: "Primeira tela do onboarding" },
@@ -34,7 +37,7 @@ const OnboardingSwipe: React.FC = () => {
   });
 
   if (loading) {
-    return <LoadingSpinner text='Carregando usuário...' />
+    return <LoadingSpinner text='Carregando...' />
   }
 
   const handleNext = () => {

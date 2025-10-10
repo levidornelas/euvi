@@ -8,14 +8,18 @@ export async function GET() {
     const response = await fetch(`${apiUrl}media-items/`, {
     });
 
-    if (!response.ok) {
+     if (!response.ok) {
+      const errorData = await response.json();
       return NextResponse.json(
-        { error: 'Erro ao buscar dados da API externa' },
-        { status: response.status }
+        {
+          detail: errorData.detail || "Erro ao buscar lugares salvos",
+        },
+        {
+          status: response.status,
+        }
       );
     }
 
-    // Retorna os dados como JSON
     const data = await response.json();
     return NextResponse.json(data);
 
