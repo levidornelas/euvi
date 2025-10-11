@@ -1,22 +1,21 @@
 "use client"
-
 import type React from "react"
 import { useState, useEffect } from "react"
 import { useParams, useRouter } from "next/navigation"
-import { MapPin, Info, ChevronLeft, LinkIcon, Icon } from "lucide-react"
-import { fetchItemDetails } from "@/services/fetch-details"
+import { MapPin, Info, ChevronLeft, LinkIcon, Bookmark } from "lucide-react"
 import MediaCarousel from "@/components/MediaCarousel"
 import LoadingSpinner from "@/components/LoadingSpinner"
 import ImageGallery from "@/components/ImageGallery"
 import { getColorForMediaType, getIconForMediaType } from "@/utils/media-type"
 import { Badge } from "@/components/ui/badge"
 import { motion, AnimatePresence } from "framer-motion"
+import { MediaItemService } from "@/services/MediaItemService"
 
 export default function Details() {
   const params = useParams()
   const router = useRouter()
   const id = params?.id as string
-
+  
   const [item, setItem] = useState<any>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
@@ -26,29 +25,79 @@ export default function Details() {
   const [touchEnd, setTouchEnd] = useState<number | null>(null)
   const [direction, setDirection] = useState(0)
   const [isLightboxOpen, setIsLightboxOpen] = useState(false)
-
-
+  
+  const [isSaved, setIsSaved] = useState(false)
+  const [isSaving, setIsSaving] = useState(false)
+  const [isCheckingSaved, setIsCheckingSaved] = useState(true)
+  
   const minSwipeDistance = 50
 
   useEffect(() => {
     const loadItemDetails = async () => {
       if (!id) return
-
+      setLoading(true) 
       try {
-        const selectedItem = await fetchItemDetails(id)
-        setItem(selectedItem)
-        setLoading(false)
+        const result = await MediaItemService.fetchItemDetails(id)
+        
+        if (result.success && result.data) {
+          setItem(result.data)
+          setError(null)
+        } else {
+          throw new Error(result.detail || "Item não encontrado ou erro desconhecido.")
+        }
       } catch (err: any) {
         setError(err.message)
+      } finally {
         setLoading(false)
       }
     }
-
     loadItemDetails()
   }, [id])
 
-  const renderLoading = () => <LoadingSpinner text="Carregando detalhes..." />
+  // Verifica se o item está salvo
+  useEffect(() => {
+    const checkIfSaved = async () => {
+      if (!id) return
+      setIsCheckingSaved(true)
+      
+      try {
+        const result = await MediaItemService.checkIfSaved(id)
+        
+        if (result.success && result.isSaved !== undefined) {
+          setIsSaved(result.isSaved)
+        }
+      } catch (err) {
+        console.error('Erro ao verificar se está salvo:', err)
+      } finally {
+        setIsCheckingSaved(false)
+      }
+    }
+    
+    checkIfSaved()
+  }, [id])
 
+  const handleToggleSave = async () => {
+    if (isSaving) return
+    
+    setIsSaving(true)
+    
+    try {
+      const result = await MediaItemService.toggleSave(id, isSaved)
+
+      if (result.success) {
+        setIsSaved(!isSaved)
+      } else {
+        console.error("Erro ao processar solicitação:", result.detail || "Erro desconhecido")
+      }
+    } catch (err) {
+      console.error("Falha na comunicação com o servidor", err)
+    } finally {
+      setIsSaving(false)
+    }
+  }
+
+  const renderLoading = () => <LoadingSpinner text="Carregando detalhes..." />
+  
   const renderError = () => (
     <div className="flex flex-col items-center justify-center h-full p-6 text-center bg-red-50">
       <div className="text-red-600 mb-4">
@@ -57,7 +106,7 @@ export default function Details() {
       <p className="text-red-700 text-lg">{error}</p>
     </div>
   )
-
+  
   const renderSemItem = () => (
     <div className="flex flex-col items-center justify-center h-full p-6 text-center">
       <div className="text-gray-600 mb-4">
@@ -75,41 +124,35 @@ export default function Details() {
   ]
 
   const changeTab = (newTab: string) => {
-    if (isLightboxOpen) return;
+    if (isLightboxOpen) return
     if (newTab === activeTab) return
-
     const currentIndex = tabs.findIndex((tab) => tab.key === activeTab)
     const newIndex = tabs.findIndex((tab) => tab.key === newTab)
-
     setDirection(newIndex > currentIndex ? 1 : -1)
     setActiveTab(newTab)
   }
 
   const onTouchStart = (e: React.TouchEvent) => {
-    if (isLightboxOpen) return;
+    if (isLightboxOpen) return
     setTouchEnd(null)
     setTouchStart(e.targetTouches[0].clientX)
   }
 
   const onTouchMove = (e: React.TouchEvent) => {
-    if (isLightboxOpen) return;
+    if (isLightboxOpen) return
     setTouchEnd(e.targetTouches[0].clientX)
   }
 
   const onTouchEnd = () => {
     if (!touchStart || !touchEnd) return
-    if (isLightboxOpen) return;
-
+    if (isLightboxOpen) return
     const distance = touchStart - touchEnd
     const isLeftSwipe = distance > minSwipeDistance
     const isRightSwipe = distance < -minSwipeDistance
-
     const currentIndex = tabs.findIndex((tab) => tab.key === activeTab)
-
     if (isLeftSwipe && currentIndex < tabs.length - 1) {
       changeTab(tabs[currentIndex + 1].key)
     }
-
     if (isRightSwipe && currentIndex > 0) {
       changeTab(tabs[currentIndex - 1].key)
     }
@@ -145,11 +188,39 @@ export default function Details() {
 
   return (
     <div className="relative min-h-screen bg-gray-200 overflow-y-visible">
-      <div className="sticky top-0 z-10 bg-primary text-white p-4 flex items-center">
-        <button className="mr-4 hover:cursor-pointer hover:text-muted-foreground" onClick={() => router.push("/map")}>
-          <ChevronLeft size={24} />
-        </button>
-        <h1 className="text-xl font-bold truncate flex-grow">{item.title}</h1>
+      <div className="sticky top-0 z-10 bg-primary text-white p-4 flex items-center justify-between">
+        <div className="flex items-center flex-1">
+          <button 
+            className="mr-4 hover:cursor-pointer hover:text-muted-foreground" 
+            onClick={() => router.push("/map")}
+          >
+            <ChevronLeft size={24} />
+          </button>
+          <h1 className="text-xl font-bold truncate">{item.title}</h1>
+        </div>
+        
+        <button
+          onClick={handleToggleSave}
+          disabled={isSaving || isCheckingSaved}
+          aria-label={isSaved ? "Remover dos salvos" : "Salvar local"}
+          className={`
+            flex items-center justify-center gap-2
+            px-4 py-2 text-sm font-medium rounded-full
+            transition-all duration-200 cursor-pointer
+            ${isSaved
+              ? "bg-gray-200 text-primary hover:bg-gray-300"
+              : "bg-blue-600 text-white hover:bg-blue-700"}
+            disabled:opacity-50 disabled:cursor-not-allowed
+          `}
+        >
+          <Bookmark
+            size={16}
+            className={`${
+              isSaved ? "fill-primary text-primary" : "fill-primary text-white"
+            }`}
+          />
+          {isSaved ? "Salvo" : "Salvar"}
+    </button>
       </div>
 
       <div className="mb-4 mx-4">
@@ -167,21 +238,21 @@ export default function Details() {
         </div>
       </div>
 
-      <div className="px-4 max-h">
+      <div className="px-4">
         <div className="flex justify-between mb-4">
           {tabs.map((tab) => (
             <button
               key={tab.key}
               onClick={() => changeTab(tab.key)}
               className={`flex flex-col items-center ${
-                activeTab === tab.key ? "text-blue-700" : "text-black hover:text-blue-700"
+                activeTab === tab.key ? "text-primary" : "text-black hover:text-primary"
               }`}
             >
               <span
                 className={`text-sm mt-0 ml-0 inline-block pb-1 transition-colors duration-800 ${
                   activeTab === tab.key
-                    ? "border-b-2 border-blue-700"
-                    : "border-b-2 border-transparent hover:border-blue-700"
+                    ? "border-b-2 border-primary"
+                    : "border-b-2 border-transparent hover:border-primary"
                 }`}
               >
                 {tab.label}
@@ -274,7 +345,7 @@ export default function Details() {
                     href={item.autor_link}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-blue-600 hover:text-blue-800"
+                    className="text-primary hover:text-primary"
                   >
                     Mais sobre o autor
                   </a>
@@ -295,7 +366,7 @@ export default function Details() {
             >
               <div className="bg-gray-200 p-4 rounded-lg overflow-y-visible">
                 <h2 className="text-lg font-semibold mb-4 text-black">Informações gerais</h2>
-                <div className="space-y-">
+                <div className="space-y-4"> 
                   <div className="flex items-center space-x-2 text-black">
                     <MapPin size={20} />
                     <span>{item.location || "Localização não disponível"}</span>
@@ -328,12 +399,10 @@ export default function Details() {
               className="bg-gray-200 rounded-lg"
             >
               <h2 className="text-lg font-semibold p-4 text-black">Galeria</h2>
-
               <ImageGallery 
-              galleryImages={galleryImages} 
-              setIsLightboxOpen={setIsLightboxOpen} 
+                galleryImages={galleryImages} 
+                setIsLightboxOpen={setIsLightboxOpen} 
               />
-
             </motion.div>
           )}
         </AnimatePresence>

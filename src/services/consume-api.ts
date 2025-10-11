@@ -1,3 +1,4 @@
+import { authenticatedFetch } from "@/lib/authenticated-fetch";
 import React from "react";
 
 
@@ -5,7 +6,7 @@ export const fetchMediaItems = async (setMediaItems: React.Dispatch<React.SetSta
   setLoading(true); 
 
   try {
-    const response = await fetch('api/media-items');
+    const response = await authenticatedFetch('/api/media-items');
     
     if (!response.ok) {
       const errorData = await response.json();

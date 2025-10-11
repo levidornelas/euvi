@@ -4,40 +4,8 @@ import { useState, useMemo } from 'react'
 import { useRouter } from 'next/navigation'
 import { X } from 'lucide-react'
 import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import clsx from 'clsx'
-
-// Pequeno componente de campo com rótulo interno (estilo do mock)
-function Field({
-  label,
-  type = 'text',
-  value,
-  onChange,
-}: {
-  label: string
-  type?: string
-  value: string
-  onChange: (v: string) => void
-}) {
-  return (
-    <div className="relative">
-      <span className="pointer-events-none absolute left-5 top-1 text-xs text-[#6FA0FF]">
-        {label}
-      </span>
-      <Input
-        type={type}
-        value={value}
-        onChange={(e) => onChange(e.target.value)}
-        placeholder={label}
-        className={clsx(
-          'h-12 w-full rounded-full border px-5 pt-4 text-sm transition',
-          'focus-visible:ring-2 focus-visible:ring-[#BFD5FF] focus:border-[#2F6EF6] bg-white',
-          value.trim() === '' && 'bg-[#EAF1FF] border-transparent'
-        )}
-      />
-    </div>
-  )
-}
+import { Field } from '@/components/Field'
+import { AuthService } from '@/services/AuthService'
 
 export default function Register() {
   const router = useRouter()
@@ -47,22 +15,45 @@ export default function Register() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [confirm, setConfirm] = useState('')
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState('')
 
   const emailOk = useMemo(() => /.+@.+\..+/.test(email), [email])
   const pwdOk = password.length >= 6
   const match = password !== '' && password === confirm
   const canContinue = firstName && lastName && emailOk && pwdOk && match
 
+  const handleRegister = async () => {
+    if (!canContinue) return
+
+    setLoading(true)
+    setError('')
+
+    const result = await AuthService.register({
+      email,
+      password,
+      password2: confirm,
+      first_name: firstName,
+      last_name: lastName,
+    })
+
+    setLoading(false)
+
+    if (result.success) {
+      router.push('/map')
+    } else {
+      setError(result.detail || 'Erro ao criar conta')
+    }
+  }
+
   return (
     <div className="min-h-screen bg-white">
-      {/* coluna central limitada */}
       <div className="mx-auto w-full max-w-sm flex min-h-screen flex-col px-4 pt-4">
-        {/* Header */}
         <div className="flex items-center justify-between">
           <button
             aria-label="Fechar"
-            onClick={() => router.back()}
-            className="p-2 -ml-2 text-muted-foreground hover:text-foreground"
+            onClick={() => router.push('/sign')}
+            className="p-2 -ml-2 text-muted-foreground hover:text-foreground hover:cursor-pointer"
           >
             <X className="h-5 w-5" />
           </button>
@@ -70,7 +61,6 @@ export default function Register() {
           <span className="w-5" />
         </div>
 
-        {/* Campos */}
         <div className="mt-4 space-y-3">
           <Field label="Nome" value={firstName} onChange={setFirstName} />
           <Field label="Sobrenome" value={lastName} onChange={setLastName} />
@@ -78,7 +68,6 @@ export default function Register() {
           <Field label="Senha" type="password" value={password} onChange={setPassword} />
           <Field label="Repetir senha" type="password" value={confirm} onChange={setConfirm} />
 
-          {/* Mensagens simples (opcional) */}
           <div className="space-y-1 text-xs">
             {email && !emailOk && (
               <p className="text-amber-600">Digite um e-mail válido.</p>
@@ -89,19 +78,21 @@ export default function Register() {
             {confirm && !match && (
               <p className="text-amber-600">As senhas não coincidem.</p>
             )}
+            {error && (
+              <p className="text-red-600">{error}</p>
+            )}
           </div>
-        </div>
 
-        {/* Botão no rodapé da COLUNA (não da tela) */}
-        <div className="mt-auto pb-4">
-          <Button
-            disabled={!canContinue}
-            className="w-full h-11 rounded-full text-white bg-[#0B63F3] hover:bg-[#0A59DB]
-                       disabled:bg-[#EAF1FF] disabled:text-[#6FA0FF] disabled:opacity-100"
-            onClick={() => console.log('Registrar')}
-          >
-            Entrar
-          </Button>
+          <div className='mt-6'>
+            <Button
+              disabled={!canContinue || loading}
+              variant={'ghost'}
+              className='w-full'
+              onClick={handleRegister}
+            >
+              {loading ? 'Cadastrando...' : 'Cadastrar'}
+            </Button>
+          </div>
         </div>
       </div>
     </div>
