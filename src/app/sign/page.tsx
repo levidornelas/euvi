@@ -15,7 +15,7 @@ export default function Sign() {
         <div className="flex items-center justify-between mb-10">
           <button
             aria-label="Fechar"
-            onClick={() => router.back()}
+            onClick={() => router.push('/onboarding')}
             className="p-2 -ml-2 text-[#272B33] hover:opacity-80"
           >
             <X className="h-5 w-5" />
