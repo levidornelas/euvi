@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 import React, { useState, useEffect, useCallback } from "react";
 import useEmblaCarousel from "embla-carousel-react";
@@ -16,7 +16,7 @@ type Slide =
 
 interface GenericCarouselProps {
   slides: Slide[];
-  captions?: string[]; // compatibilidade com API
+  captions?: string[]; 
   autoplay?: boolean;
   autoplayDelay?: number;
   loop?: boolean;
@@ -33,7 +33,9 @@ const GenericCarousel: React.FC<GenericCarouselProps> = ({
 }) => {
   const [emblaRef, emblaApi] = useEmblaCarousel(
     { loop, align: "center" },
-    autoplay ? [Autoplay({ delay: autoplayDelay, stopOnInteraction: false })] : []
+    autoplay
+      ? [Autoplay({ delay: autoplayDelay, stopOnInteraction: false })]
+      : []
   );
 
   const [selectedIndex, setSelectedIndex] = useState(0);
@@ -67,22 +69,18 @@ const GenericCarousel: React.FC<GenericCarouselProps> = ({
       <div className="overflow-hidden rounded-xl" ref={emblaRef}>
         <div className="flex">
           {slides.map((slide, index) => {
-            const imageSrc =
-              typeof slide === "string" ? slide : slide.imageSrc;
+            const imageSrc = typeof slide === "string" ? slide : slide.imageSrc;
             const imageAlt =
-              typeof slide === "string" ? `Imagem ${index + 1}` : slide.imageAlt;
-            const caption =
               typeof slide === "string"
-                ? captions?.[index]
-                : slide.caption;
+                ? `Imagem ${index + 1}`
+                : slide.imageAlt;
+            const caption =
+              typeof slide === "string" ? captions?.[index] : slide.caption;
 
             return (
-              <div
-                key={index}
-                className="flex-[0_0_100%] min-w-0 relative"
-              >
+              <div key={index} className="flex-[0_0_100%] min-w-0 relative">
                 <div className="relative w-full h-[370px] overflow-hidden rounded-xl shadow-lg bg-gray-100">
-                  <img
+                  <Image
                     src={imageSrc}
                     alt={imageAlt}
                     className="w-full h-full object-cover"

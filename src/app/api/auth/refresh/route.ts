@@ -13,7 +13,7 @@ export async function POST(req: Request) {
   }
 
   try {
-    const res = await fetch(`${process.env.API_URL}auth/refresh/`, {
+    const res = await fetch(`${process.env.API_URL}auth/token/refresh/`, {
       method: "POST",
       body: JSON.stringify({ refresh: refreshToken }),
       headers: { "Content-Type": "application/json" },
@@ -23,15 +23,15 @@ export async function POST(req: Request) {
       (await cookieStore).delete("accessToken");
       (await cookieStore).delete("refreshToken");
 
-    const errorData = await res.json();
-        return new Response(
+      const errorData = await res.json();
+      return new Response(
         JSON.stringify({
-            detail: errorData.detail || "Erro ao dar refresh.",
+          detail: errorData.detail || "Erro ao dar refresh.",
         }),
         {
-            status: res.status,
+          status: res.status,
         }
-        );
+      );
     }
 
     const { access, refresh } = await res.json();

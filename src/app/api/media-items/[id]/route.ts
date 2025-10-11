@@ -1,33 +1,35 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from "next/server";
+import { checkAuth } from "@/utils/check-auth";
 
 export async function GET(
   request: NextRequest,
   context: { params: Promise<{ id: string }> }
 ) {
+  const { access, error } = await checkAuth();
+  if (error) return error;
+
   try {
     const { id } = await context.params;
 
     // Validar se o ID é um número válido
     if (!id || isNaN(Number(id))) {
-      return NextResponse.json(
-        { error: 'ID inválido' },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: "ID inválido" }, { status: 400 });
     }
 
+    const apiUrl = process.env.API_URL;
+
     // Buscar o item específico
-    const itemResponse = await fetch(
-      `${process.env.API_URL}media-items/${id}/`,
-      {
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      }
-    );
+    const itemResponse = await fetch(`${apiUrl}media-items/${id}/`, {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${access}`,
+      },
+    });
 
     if (!itemResponse.ok) {
+      const errorData = await itemResponse.json().catch(() => ({}));
       return NextResponse.json(
-        { error: 'Item não encontrado' },
+        { error: errorData.detail || "Item não encontrado" },
         { status: itemResponse.status }
       );
     }
@@ -36,10 +38,11 @@ export async function GET(
 
     // Buscar locais próximos relacionados
     const locaisResponse = await fetch(
-      `${process.env.API_URL}locais-proximos/?media_item=${id}`,
+      `${apiUrl}locais-proximos/?media_item=${id}`,
       {
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${access}`,
         },
       }
     );
@@ -54,15 +57,14 @@ export async function GET(
     // Combinar dados
     const resultado = {
       ...item,
-      locais
+      locais,
     };
 
     return NextResponse.json(resultado);
-
   } catch (error: any) {
-    console.error('Erro ao buscar detalhes do item:', error);
+    console.error("Erro ao buscar detalhes do item:", error);
     return NextResponse.json(
-      { error: 'Erro interno do servidor', message: error.message },
+      { error: "Erro interno do servidor", message: error.message },
       { status: 500 }
     );
   }

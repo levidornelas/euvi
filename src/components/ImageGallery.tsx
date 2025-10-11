@@ -4,6 +4,7 @@ import "yet-another-react-lightbox/styles.css";
 import Thumbnails from "yet-another-react-lightbox/plugins/thumbnails";
 import Zoom from "yet-another-react-lightbox/plugins/zoom";
 import "yet-another-react-lightbox/plugins/thumbnails.css";
+import Image from "next/image";
 
 interface ImageGalleryProps {
   galleryImages: string[];
@@ -29,8 +30,9 @@ export default function ImageGallery({ galleryImages, setIsLightboxOpen }: Image
     <>
       <div className="grid grid-cols-3 gap-2">
         {galleryImages.map((img, idx) => (
-          <img
+          <Image
             key={idx}
+            alt=""
             src={img}
             onClick={() => handleOpen(idx)}
             className="cursor-pointer rounded-lg hover:opacity-80 w-full h-full object-cover"

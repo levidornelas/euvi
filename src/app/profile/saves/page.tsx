@@ -3,6 +3,7 @@ import { useRouter } from 'next/navigation'
 import { ChevronLeft, MapPin, Heart } from 'lucide-react'
 import { Card } from '@/components/ui/card'
 import { useEffect, useState } from 'react'
+import Image from 'next/image'
 
 interface SavedPlace {
   id: number;
@@ -130,7 +131,7 @@ export default function SavedPlacesPage() {
             >
               {/* Imagem */}
               <div className="relative h-28 w-full bg-gray-100">
-                <img
+                <Image
                   src={getPlaceImage(place)}
                   alt={place.title}
                   className="w-full h-full object-cover rounded-sm"

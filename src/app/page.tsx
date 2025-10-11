@@ -1,12 +1,13 @@
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
+import Image from "next/image";
 
 // Página inicial do App.
 export default function HomePage() {
   return (
     <>
       <div className="flex flex-col items-center justify-center mt-28 sm:mt-20 overflow-hidden">
-        <img src="/logobranca.svg" alt="Logo" width={400} height={400} />
+        <Image src="/logobranca.svg" alt="Logo" width={400} height={400} />
         <h1 className="text-4xl font-bold text-white mt-0">Recife</h1>
       </div>
 

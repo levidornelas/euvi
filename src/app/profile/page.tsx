@@ -1,18 +1,22 @@
-'use client'
-
-import Image from 'next/image'
-import { useAuth } from '@/providers/AuthProvider'
-import { Card } from '@/components/ui/card'
-import { Pencil, User, Bookmark, Eye, LogOut, X } from 'lucide-react'
-import { useRouter } from 'next/navigation'
-import { Separator } from '@/components/ui/separator'
-import { ProfileOption } from '@/components/ProfileOption'
+"use client";
+import Image from "next/image";
+import { useAuth } from "@/providers/AuthProvider";
+import { Card } from "@/components/ui/card";
+import { Pencil, User, Bookmark, Eye, LogOut, X } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { Separator } from "@/components/ui/separator";
+import { ProfileOption } from "@/components/ProfileOption";
+import { AuthService } from "@/services/AuthService";
 
 export default function ProfilePage() {
-  const { user } = useAuth()
-  const router = useRouter()
+  const { user } = useAuth();
+  const router = useRouter();
+  const fullName = `${user?.first_name || ""} ${user?.last_name || ""}`.trim();
 
-  const fullName = `${user?.first_name || ''} ${user?.last_name || ''}`.trim()
+  const handleLogout = async () => {
+    await AuthService.logout();
+    router.push("/sign");
+  };
 
   return (
     <div className="flex flex-col min-h-screen bg-white">
@@ -20,7 +24,7 @@ export default function ProfilePage() {
       <div className="flex items-center justify-between px-4 pt-4">
         <button
           aria-label="Fechar"
-          onClick={() => router.push('/map')}
+          onClick={() => router.push("/map")}
           className="p-2 text-muted-foreground hover:text-foreground"
         >
           <X className="h-5 w-5" />
@@ -43,11 +47,10 @@ export default function ProfilePage() {
             />
           ) : (
             <div className="w-28 h-28 rounded-full bg-[#5A8DFF] flex items-center justify-center text-white text-3xl font-semibold">
-              {user?.first_name?.[0]?.toUpperCase() || '?'}
-              {user?.last_name?.[0]?.toUpperCase() || ''}
+              {user?.first_name?.[0]?.toUpperCase() || "?"}
+              {user?.last_name?.[0]?.toUpperCase() || ""}
             </div>
           )}
-
           <button className="absolute bottom-3 right-3 bg-[#1D64F2] p-2 rounded-full hover:bg-[#174ecc] transition">
             <Pencil className="w-4 h-4 text-white" />
           </button>
@@ -65,16 +68,33 @@ export default function ProfilePage() {
         {/* Opções */}
         <div className="w-full mt-8 space-y-1">
           <Separator />
-          <ProfileOption icon={<User size={18} />} label="Informações da conta" pushTo='profile/info'/>
+          <ProfileOption
+            icon={<User size={18} />}
+            label="Informações da conta"
+            pushTo="/profile/info"
+          />
           <Separator />
-          <ProfileOption icon={<Bookmark size={18} />} label="Lugares salvos" pushTo='profile/saves'/>
+          <ProfileOption
+            icon={<Bookmark size={18} />}
+            label="Lugares salvos"
+            pushTo="/profile/saves"
+          />
           <Separator />
-          <ProfileOption icon={<Eye size={18} />} label="Sobre o projeto" pushTo='about/'/>
+          <ProfileOption
+            icon={<Eye size={18} />}
+            label="Sobre o projeto"
+            pushTo="/about"
+          />
           <Separator />
-          <ProfileOption icon={<LogOut size={18} />} label="Sair" textColor="text-red-500" />
+          <ProfileOption
+            icon={<LogOut size={18} />}
+            label="Sair"
+            textColor="text-red-500"
+            action={handleLogout}
+          />
           <Separator />
         </div>
       </div>
     </div>
-  )
+  );
 }

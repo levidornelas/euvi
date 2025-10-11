@@ -10,6 +10,7 @@ import { getColorForMediaType, getIconForMediaType } from "@/utils/media-type"
 import { Badge } from "@/components/ui/badge"
 import { motion, AnimatePresence } from "framer-motion"
 import { MediaItemService } from "@/services/MediaItemService"
+import Image from "next/image"
 
 export default function Details() {
   const params = useParams()
@@ -309,7 +310,7 @@ export default function Details() {
               <h2 className="text-lg font-semibold mb-4 text-black">{item.autor || "Autor Desconhecido"}</h2>
               {item.autor_imagem && (
                 <div className="mb-4">
-                  <img
+                  <Image
                     src={item.autor_imagem || "/placeholder.svg"}
                     alt={`Imagem de ${item.autor || "Autor Desconhecido"}`}
                     className="rounded-lg"
@@ -414,7 +415,7 @@ export default function Details() {
           onClick={() => setSelectedImage(null)}
         >
           <div className="relative max-w-5xl max-h-[90vh] w-full h-full flex items-center justify-center">
-            <img
+            <Image
               src={selectedImage || "/placeholder.svg"}
               alt="Selected"
               className="max-w-full max-h-full object-contain"

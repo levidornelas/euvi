@@ -1,3 +1,5 @@
+import { authenticatedFetch } from "@/lib/authenticated-fetch";
+
 export interface RegisterData {
   email: string;
   password: string;
@@ -19,10 +21,10 @@ export interface AuthResponse {
 export class AuthService {
   static async register(data: RegisterData): Promise<AuthResponse> {
     try {
-      const response = await fetch('/api/auth/register', {
-        method: 'POST',
+      const response = await fetch("/api/auth/register", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify(data),
       });
@@ -32,7 +34,7 @@ export class AuthService {
       if (!response.ok) {
         return {
           success: false,
-          detail: result.detail || 'Erro ao criar conta',
+          detail: result.detail || "Erro ao criar conta",
         };
       }
 
@@ -40,17 +42,17 @@ export class AuthService {
     } catch (error) {
       return {
         success: false,
-        detail: 'Erro de conexão. Tente novamente.',
+        detail: "Erro de conexão. Tente novamente.",
       };
     }
   }
 
   static async login(data: LoginData): Promise<AuthResponse> {
     try {
-      const response = await fetch('/api/auth/login', {
-        method: 'POST',
+      const response = await fetch("/api/auth/login", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify(data),
       });
@@ -60,7 +62,7 @@ export class AuthService {
       if (!response.ok) {
         return {
           success: false,
-          detail: result.detail || 'Erro ao fazer login',
+          detail: result.detail || "Erro ao fazer login",
         };
       }
 
@@ -68,7 +70,31 @@ export class AuthService {
     } catch (error) {
       return {
         success: false,
-        detail: 'Erro de conexão. Tente novamente.',
+        detail: "Erro de conexão. Tente novamente.",
+      };
+    }
+  }
+
+  static async logout(): Promise<AuthResponse> {
+    try {
+      const response = await authenticatedFetch("api/auth/logout", {
+        method: "POST",
+      });
+
+      const result = await response.json();
+
+      if (!response.ok) {
+        return {
+          success: false,
+          detail: result.detail || "Erro ao fazer logout",
+        };
+      }
+
+      return { success: true };
+    } catch (error) {
+      return {
+        success: false,
+        detail: "Erro de conexão. Tente novamente.",
       };
     }
   }
