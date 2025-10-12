@@ -1,9 +1,9 @@
-'use client'
-import { useRouter } from 'next/navigation'
-import { ChevronLeft, MapPin, Heart } from 'lucide-react'
-import { Card } from '@/components/ui/card'
-import { useEffect, useState } from 'react'
-import Image from 'next/image'
+"use client";
+import { useRouter } from "next/navigation";
+import { ChevronLeft, MapPin, Heart } from "lucide-react";
+import { Card } from "@/components/ui/card";
+import { useEffect, useState } from "react";
+import Image from "next/image";
 
 interface SavedPlace {
   id: number;
@@ -15,36 +15,36 @@ interface SavedPlace {
 }
 
 export default function SavedPlacesPage() {
-  const router = useRouter()
-  const [places, setPlaces] = useState<SavedPlace[]>([])
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
+  const router = useRouter();
+  const [places, setPlaces] = useState<SavedPlace[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    fetchSavedPlaces()
-  }, [])
+    fetchSavedPlaces();
+  }, []);
 
   const fetchSavedPlaces = async () => {
     try {
-      const response = await fetch('/api/media-items/saved-places')
-      
+      const response = await fetch("/api/media-items/saved-places");
+
       if (!response.ok) {
-        const errorData = await response.json()
-        throw new Error(errorData.detail || 'Erro ao carregar lugares salvos')
+        const errorData = await response.json();
+        throw new Error(errorData.detail || "Erro ao carregar lugares salvos");
       }
-      
-      const data = await response.json()
-      setPlaces(data)
+
+      const data = await response.json();
+      setPlaces(data);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Erro desconhecido')
+      setError(err instanceof Error ? err.message : "Erro desconhecido");
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
   // const handleRemoveFavorite = async (placeId: number, e: React.MouseEvent) => {
   //   e.stopPropagation()
-    
+
   //   try {
   //     const response = await fetch(`/api/media-items/${placeId}/toggle-favorite`, {
   //       method: 'POST',
@@ -62,12 +62,17 @@ export default function SavedPlacesPage() {
   // }
 
   const handleCardClick = (placeId: number) => {
-    router.push(`/details/${placeId}`)
-  }
+    router.push(`/details/${placeId}`);
+  };
 
   const getPlaceImage = (place: SavedPlace) => {
-    return place.imagem_local || place.imagem_cartaz || place.imagem_obra || '/placeholder-image.jpg'
-  }
+    return (
+      place.imagem_local ||
+      place.imagem_cartaz ||
+      place.imagem_obra ||
+      "/placeholder-image.jpg"
+    );
+  };
 
   if (loading) {
     return (
@@ -87,7 +92,7 @@ export default function SavedPlacesPage() {
           <p className="text-gray-500">Carregando...</p>
         </div>
       </div>
-    )
+    );
   }
 
   return (
@@ -115,7 +120,9 @@ export default function SavedPlacesPage() {
         {!error && places.length === 0 && (
           <div className="text-center py-12">
             <Heart className="w-16 h-16 mx-auto text-gray-300 mb-4" />
-            <p className="text-gray-500 text-lg mb-2">Nenhum lugar salvo ainda</p>
+            <p className="text-gray-500 text-lg mb-2">
+              Nenhum lugar salvo ainda
+            </p>
             <p className="text-gray-400 text-sm">
               Comece a explorar e salve seus lugares favoritos
             </p>
@@ -134,9 +141,11 @@ export default function SavedPlacesPage() {
                 <Image
                   src={getPlaceImage(place)}
                   alt={place.title}
+                  width={200}
+                  height={0}
                   className="w-full h-full object-cover rounded-sm"
                 />
-                
+
                 <button
                   className="absolute top-3 right-3 bg-white/95 backdrop-blur-sm p-2 rounded-full hover:bg-white transition-all hover:scale-110"
                   aria-label="Remover dos favoritos"
@@ -144,7 +153,7 @@ export default function SavedPlacesPage() {
                   <Heart className="w-4 h-4 text-red-500 fill-red-500" />
                 </button>
               </div>
-              
+
               {/* Informações */}
               <div className="p-2 bg-white">
                 <h3 className="font-semibold text-gray-900 mb-2">
@@ -160,5 +169,5 @@ export default function SavedPlacesPage() {
         </div>
       </div>
     </div>
-  )
+  );
 }

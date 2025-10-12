@@ -34,6 +34,8 @@ export default function ImageGallery({ galleryImages, setIsLightboxOpen }: Image
             key={idx}
             alt=""
             src={img}
+            width={200}
+            height={200}
             onClick={() => handleOpen(idx)}
             className="cursor-pointer rounded-lg hover:opacity-80 w-full h-full object-cover"
           />

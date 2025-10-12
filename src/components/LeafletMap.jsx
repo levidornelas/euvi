@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 import React from "react";
 import L from "leaflet";
@@ -58,64 +58,66 @@ const LeafletMap = ({
 
   return (
     <div className="relative flex-1">
-    <MapContainer
-      center={mapCenter}
-      zoom={mapZoom}
-      className="h-full w-full z-0"
-      attributionControl={true}
-      style={{ height: "100%", width: "100%" }}
-    >
-      <MapEventHandler onZoomChange={onZoomChange} />
+      <MapContainer
+        center={mapCenter}
+        zoom={mapZoom}
+        className="h-full w-full z-0"
+        attributionControl={true}
+        style={{ height: "100%", width: "100%" }}
+      >
+        <MapEventHandler onZoomChange={onZoomChange} />
 
-      <TileLayer
-        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-        attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-      />
-
-      {mediaItems.map((item) => (
-        <Marker
-          key={item.id}
-          position={[item.latitude, item.longitude]}
-          icon={createIcon(item.media_type)}
-          eventHandlers={{
-            click: () => onPinClick?.(item),
-          }}
-        >
-          {mapZoom >= 14 && (
-            <Tooltip
-              permanent
-              direction="right"
-              offset={[15, -30]}
-              className="!bg-transparent !p-0 !border-none !shadow-none"
-            >
-              <div className="text-black text-xs font-semibold">{item.title}</div>
-            </Tooltip>
-          )}
-        </Marker>
-      ))}
-        
-      {userLocation && (
-        <Marker
-          position={[userLocation.latitude, userLocation.longitude]}
-          icon={createUserLocationIcon()}
-        >
-          <Popup>Você está aqui</Popup>
-        </Marker>
-      )}
-    </MapContainer>
-      <Link href="/about">
-      <div className="absolute top-4 right-3 z-50">
-        <Image 
-          src="/logomapa.svg" 
-          width={60} 
-          height={50} 
-          alt="Sobre o EUVI"
-          className="cursor-pointer rounded-lg shadow-lg transition-transform duration-200 hover:scale-105 hover:shadow-xl animate-pulse"
+        <TileLayer
+          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
         />
-      </div>
-    </Link>
-</div>
-);
+
+        {mediaItems.map((item) => (
+          <Marker
+            key={item.id}
+            position={[item.latitude, item.longitude]}
+            icon={createIcon(item.media_type)}
+            eventHandlers={{
+              click: () => onPinClick?.(item),
+            }}
+          >
+            {mapZoom >= 16 && (
+              <Tooltip
+                permanent
+                direction="right"
+                offset={[15, -30]}
+                className="!bg-transparent !p-0 !border-none !shadow-none"
+              >
+                <div className="text-black text-xs font-semibold">
+                  {item.title}
+                </div>
+              </Tooltip>
+            )}
+          </Marker>
+        ))}
+
+        {userLocation && (
+          <Marker
+            position={[userLocation.latitude, userLocation.longitude]}
+            icon={createUserLocationIcon()}
+          >
+            <Popup>Você está aqui</Popup>
+          </Marker>
+        )}
+      </MapContainer>
+      <Link href="/about">
+        <div className="absolute top-4 right-3 z-50">
+          <Image
+            src="/logomapa.svg"
+            width={60}
+            height={50}
+            alt="Sobre o EUVI"
+            className="cursor-pointer rounded-lg shadow-lg transition-transform duration-200 hover:scale-105 hover:shadow-xl animate-pulse"
+          />
+        </div>
+      </Link>
+    </div>
+  );
 };
 
 export default LeafletMap;

@@ -1,36 +1,34 @@
-import { Film, Book, Music, Palette, HelpCircle } from 'lucide-react';
+import { Film, Book, Music, Palette, HelpCircle } from "lucide-react";
 
 export const getImageForMediaType = (mediaType: string) => {
   switch (mediaType) {
-    case 'Filmes':
-      return '/films.svg' 
-    case 'Livros':
-      return '/books.svg'
-    case 'Músicas':
-      return '/music.svg'
-    case 'Artes':
-      return '/art.svg'
+    case "Filmes":
+      return "/films.svg";
+    case "Livros":
+      return "/books.svg";
+    case "Músicas":
+      return "/music.svg";
+    case "Artes":
+      return "/art.svg";
     default:
-      return null;
+      return "/art.svg";
   }
 };
 
 export const getColorForMediaType = (mediaType: string) => {
   switch (mediaType) {
-    case 'Filmes':
-      return 'bg-red-600 text-white';
-    case 'Livros':
-      return 'bg-green-600 text-white';
-    case 'Músicas':
-      return 'bg-orange-500 text-white';
-    case 'Artes':
-      return 'bg-purple-500 text-white';
+    case "Filmes":
+      return "bg-red-600 text-white";
+    case "Livros":
+      return "bg-green-600 text-white";
+    case "Músicas":
+      return "bg-orange-500 text-white";
+    case "Artes":
+      return "bg-purple-500 text-white";
     default:
-      return 'bg-gray-100 text-gray-800';
+      return "bg-gray-100 text-gray-800";
   }
-}
-
-
+};
 
 export const getIconForMediaType = (mediaType: string) => {
   switch (mediaType) {
