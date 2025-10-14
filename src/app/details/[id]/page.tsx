@@ -206,7 +206,7 @@ export default function Details() {
           >
             <ChevronLeft size={24} />
           </button>
-          <h1 className="text-xl font-bold truncate">{item.title}</h1>
+          <h1 className="text-[18px] font-bold truncate">{item.title}</h1>
         </div>
 
         <button
@@ -360,7 +360,7 @@ export default function Details() {
               {item.obras && (
                 <div className="mb-4">
                   <h3 className="text-md font-semibold mb-2 text-black">
-                    Outras Obras
+                    Para conhecer mais sobre quem criou a obra, recomendamos:
                   </h3>
                   <ul className="list-disc pl-6 text-black">
                     {normalizeText(item.obras)

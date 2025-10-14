@@ -1,4 +1,4 @@
-'use client'
+"use client";
 
 import { FaLinkedin, FaInstagram } from "react-icons/fa";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -11,11 +11,21 @@ export default function AboutUs() {
 
   return (
     <>
-      <div className="flex flex-col items-center justify-center mt-10 px-8">
+      {/* Seta de voltar */}
+      <div className="flex items-start justify-start mt-10 px-6">
+        <ChevronLeft
+          size={36}
+          className="cursor-pointer text-white"
+          onClick={() => router.back()}
+        />
+      </div>
+
+      {/* Título */}
+      <div className="flex flex-col items-center justify-center px-8">
         <h1 className="text-4xl font-bold text-white">Sobre Nós</h1>
       </div>
 
-      {/* Valores e objetivos */}
+      {/* Conteúdo */}
       <div className="flex flex-col items-center gap-6 mt-8 px-6 max-h-screen">
         <Card className="w-full max-w-3xl">
           <CardHeader>
@@ -41,8 +51,8 @@ export default function AboutUs() {
             <p>
               Conectar cidadãos e turistas à rica herança cultural de Recife,
               utilizando a tecnologia como ponte para valorizar a história, a
-              música e o cinema presentes em cada canto da cidade. Nossa missão é
-              promover o turismo local e oferecer novas perspectivas sobre
+              música e o cinema presentes em cada canto da cidade. Nossa missão
+              é promover o turismo local e oferecer novas perspectivas sobre
               Recife, celebrando tudo o que torna a cidade única e inspiradora.
             </p>
           </CardContent>
@@ -77,18 +87,6 @@ export default function AboutUs() {
             </div>
           </CardContent>
         </Card>
-        <div className="flex items-center mb-4 px-6">
-        <Button
-          variant="ghost"
-          size="icon"
-          className="flex items-center gap-2"
-          onClick={() => router.push("/map")}
-        >
-          <ChevronLeft size={18} />
-          Voltar ao mapa
-        </Button>
-      </div>
-
       </div>
     </>
   );
