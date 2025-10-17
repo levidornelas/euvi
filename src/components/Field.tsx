@@ -17,6 +17,7 @@ export function Field({
 }) {
   const inputRef = useRef<HTMLInputElement>(null);
 
+  // Force remove readonly on mount and interaction
   useEffect(() => {
     const input = inputRef.current;
     if (!input || readOnly) return;
@@ -26,8 +27,10 @@ export function Field({
       input.readOnly = false;
     };
 
+    // Remove readonly immediately
     removeReadonly();
 
+    // Add event listeners to ensure input stays editable
     const events = ["focus", "click", "touchstart"];
     events.forEach((event) => {
       input.addEventListener(event, removeReadonly);
@@ -40,6 +43,10 @@ export function Field({
     };
   }, [readOnly]);
 
+  // Use text type for email to avoid autofill issues, but keep email keyboard
+  const inputType = type === "email" ? "text" : type;
+  const inputMode = type === "email" ? "email" : undefined;
+
   return (
     <div className="relative">
       <span className="pointer-events-none absolute left-5 top-1 text-xs text-[#6FA0FF]">
@@ -47,7 +54,8 @@ export function Field({
       </span>
       <Input
         ref={inputRef}
-        type={type}
+        type={inputType}
+        inputMode={inputMode}
         value={value}
         onChange={(e) => onChange(e.target.value)}
         onFocus={(e) => {
@@ -59,7 +67,8 @@ export function Field({
         }}
         placeholder={label}
         readOnly={readOnly}
-        autoComplete={type === "password" ? "new-password" : "off"}
+        autoComplete="off"
+        name={`field-${label.toLowerCase().replace(/\s+/g, "-")}`}
         className={clsx(
           "h-12 w-full rounded-full border px-5 pt-4 text-sm transition",
           value.trim() === "" && "bg-[#EAF1FF] border-transparent"
