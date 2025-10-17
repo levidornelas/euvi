@@ -1,5 +1,6 @@
 import clsx from "clsx";
 import { Input } from "./ui/input";
+import { useEffect, useRef } from "react";
 
 export function Field({
   label,
@@ -7,30 +8,58 @@ export function Field({
   value,
   onChange,
   readOnly = false,
-  autoComplete,
-  name,
 }: {
   label: string;
   type?: string;
   value: string;
   onChange: (v: string) => void;
   readOnly?: boolean;
-  autoComplete?: string;
-  name?: string;
 }) {
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    const input = inputRef.current;
+    if (!input || readOnly) return;
+
+    const removeReadonly = () => {
+      input.removeAttribute("readonly");
+      input.readOnly = false;
+    };
+
+    removeReadonly();
+
+    const events = ["focus", "click", "touchstart"];
+    events.forEach((event) => {
+      input.addEventListener(event, removeReadonly);
+    });
+
+    return () => {
+      events.forEach((event) => {
+        input.removeEventListener(event, removeReadonly);
+      });
+    };
+  }, [readOnly]);
+
   return (
     <div className="relative">
       <span className="pointer-events-none absolute left-5 top-1 text-xs text-[#6FA0FF]">
         {label}
       </span>
       <Input
+        ref={inputRef}
         type={type}
         value={value}
         onChange={(e) => onChange(e.target.value)}
+        onFocus={(e) => {
+          // Force remove readonly on focus
+          if (!readOnly) {
+            e.target.removeAttribute("readonly");
+            e.target.readOnly = false;
+          }
+        }}
         placeholder={label}
         readOnly={readOnly}
-        autoComplete={autoComplete || "off"}
-        name={name}
+        autoComplete={type === "password" ? "new-password" : "off"}
         className={clsx(
           "h-12 w-full rounded-full border px-5 pt-4 text-sm transition",
           value.trim() === "" && "bg-[#EAF1FF] border-transparent"
