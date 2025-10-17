@@ -1,18 +1,22 @@
-import clsx from 'clsx'
-import { Input } from './ui/input'
+import clsx from "clsx";
+import { Input } from "./ui/input";
 
 export function Field({
   label,
-  type = 'text',
+  type = "text",
   value,
   onChange,
-  readOnly = false, 
+  readOnly = false,
+  autoComplete,
+  name,
 }: {
-  label: string
-  type?: string
-  value: string
-  onChange: (v: string) => void
-  readOnly?: boolean
+  label: string;
+  type?: string;
+  value: string;
+  onChange: (v: string) => void;
+  readOnly?: boolean;
+  autoComplete?: string;
+  name?: string;
 }) {
   return (
     <div className="relative">
@@ -24,12 +28,14 @@ export function Field({
         value={value}
         onChange={(e) => onChange(e.target.value)}
         placeholder={label}
-        readOnly={readOnly} 
+        readOnly={readOnly}
+        autoComplete={autoComplete || "off"}
+        name={name}
         className={clsx(
-          'h-12 w-full rounded-full border px-5 pt-4 text-sm transition',
-          value.trim() === '' && 'bg-[#EAF1FF] border-transparent',
+          "h-12 w-full rounded-full border px-5 pt-4 text-sm transition",
+          value.trim() === "" && "bg-[#EAF1FF] border-transparent"
         )}
       />
     </div>
-  )
+  );
 }

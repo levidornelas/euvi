@@ -64,26 +64,52 @@ export default function Register() {
           <span className="w-5" />
         </div>
 
-        <div className="mt-4 space-y-3">
-          <Field label="Nome" value={firstName} onChange={setFirstName} />
-          <Field label="Sobrenome" value={lastName} onChange={setLastName} />
+        {/* Form com autocomplete=off para evitar problemas no Instagram */}
+        <form 
+          className="mt-4 space-y-3"
+          autoComplete="off"
+          onSubmit={(e) => {
+            e.preventDefault();
+            handleRegister();
+          }}
+        >
+          <Field 
+            label="Nome" 
+            value={firstName} 
+            onChange={setFirstName}
+            autoComplete="off"
+            name="first-name-custom"
+          />
+          <Field 
+            label="Sobrenome" 
+            value={lastName} 
+            onChange={setLastName}
+            autoComplete="off"
+            name="last-name-custom"
+          />
           <Field
             label="E-mail"
             type="email"
             value={email}
             onChange={setEmail}
+            autoComplete="off"
+            name="email-custom"
           />
           <Field
             label="Senha"
             type="password"
             value={password}
             onChange={setPassword}
+            autoComplete="new-password"
+            name="password-custom"
           />
           <Field
             label="Repetir senha"
             type="password"
             value={confirm}
             onChange={setConfirm}
+            autoComplete="new-password"
+            name="confirm-password-custom"
           />
 
           <div className="space-y-1 text-xs mt-1">
@@ -108,15 +134,15 @@ export default function Register() {
 
           <div className="mt-6">
             <Button
+              type="submit"
               disabled={!canContinue || loading}
               variant={"ghost"}
               className="w-full"
-              onClick={handleRegister}
             >
               {loading ? "Cadastrando..." : "Cadastrar"}
             </Button>
           </div>
-        </div>
+        </form>
       </div>
     </div>
   );
