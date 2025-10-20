@@ -43,7 +43,6 @@ export function Field({
     };
   }, [readOnly]);
 
-  // Use text type for email to avoid autofill issues, but keep email keyboard
   const inputType = type === "email" ? "text" : type;
   const inputMode = type === "email" ? "email" : undefined;
 
@@ -59,7 +58,6 @@ export function Field({
         value={value}
         onChange={(e) => onChange(e.target.value)}
         onFocus={(e) => {
-          // Force remove readonly on focus
           if (!readOnly) {
             e.target.removeAttribute("readonly");
             e.target.readOnly = false;
