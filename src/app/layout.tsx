@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { AuthProvider } from "@/providers/AuthProvider";
+import PageTransition from "@/components/PageTransition";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -34,7 +35,9 @@ export default function RootLayout({
             style={{ backgroundImage: `url(/bg-img.png)` }}
           >
             <div className="relative h-full sm:min-h-[95vh] w-[420px] bg-[#145CCC] shadow-xl overflow-auto">
-              <div className="h-full w-full relative">{children}</div>
+              <PageTransition>
+                <div className="h-full w-full relative">{children}</div>
+              </PageTransition>
             </div>
           </div>
         </AuthProvider>
